@@ -13,6 +13,7 @@ const propTypes = {
   transitionAppearTimeout: transitionTimeout('Appear'),
   transitionEnterTimeout: transitionTimeout('Enter'),
   transitionLeaveTimeout: transitionTimeout('Leave'),
+  childFactory: React.PropTypes.func,
 };
 
 const defaultProps = {
@@ -45,9 +46,15 @@ class CSSTransitionGroup extends React.Component {
   );
 
   render() {
+    const { childFactory } = this.props;
+
+    delete this.props.childFactory;
+
     return React.createElement(
       TransitionGroup,
-      Object.assign({}, this.props, { childFactory: this._wrapChild }),
+      Object.assign({}, this.props, { childFactory: (child) => {
+        return this._wrapChild(childFactory(child));
+      }}),
     );
   }
 }
